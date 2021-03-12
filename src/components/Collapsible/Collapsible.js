@@ -1,32 +1,19 @@
-import React, { useState, useRef } from 'react';
-import { CollapsibleWrapper, ItemWrapper, Panel, Title } from './Collapsible.styles'
-import { items } from '../../data';
-
-const Item = ({item}) => {
-    const [state, setState] = useState(false);
-    const panelBody = useRef(null);
-    const { title, content } = item;
-
-    const currentHeight = state ? panelBody.current.clientHeight : 0;
-
-    return (
-        <ItemWrapper className={state ? 'isExpanded' : null}>
-            <Title onClick={() => setState(!state)}>{title}</Title>
-            <Panel style={{height: `${currentHeight}px`}}>
-                <div ref={panelBody}>{content}</div>
-            </Panel>
-        </ItemWrapper>
-    )
-}
+import React from 'react';
+import { Loader, Item } from '../../components';
+import { CollapsibleWrapper } from './Collapsible.styles'
+import { useContactsAPI } from '../../hooks';
 
 export const Collapsible = () => {
+    const [{isLoading, users}, fetchUsers] = useContactsAPI()
+    
     return ( 
         <CollapsibleWrapper>
+        <button onClick={() => fetchUsers()}>Fetch users</button>
             {
-                items.map(item => <Item key={item.title} item={item}/>)
+                isLoading ? <Loader /> : users.map(item => <Item key={item.title} item={item}/>)
             }
         </CollapsibleWrapper>
     )
 }
 
-export default Collapsible;
+export default Collapsible
